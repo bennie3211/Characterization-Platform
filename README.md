@@ -96,6 +96,9 @@ Key dependencies include:
 4.  **Hardware Configuration**:
     - **Robot**: Ensure your UR robot is powered on and reachable on the network. The default IP in `main.py` is `192.168.100.1`.
     - **Arduino**: Connect your Arduino(s) via USB. The default configuration in `main.py` expects an Arduino named `force` on port `/dev/ttyACM0` (Linux) or a corresponding COM port (Windows).
+    - **Force Module Design**: The mechanical design of the force module (also implemented in the main controller under `force`)
+     is provided in the `design/` directory. This directory contains all corresponding CAD files in
+     `.step` format.
 
 ## How it Works
 
