@@ -1,0 +1,76 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+package "Main Script" {
+    class Main {
+        + main()
+    }
+}
+
+package "Hardware" {
+    class ArduinoNode {
+        - port : str
+        - baudrate : int
+        - data_queue : deque
+        - running : bool
+        - ser : Serial
+        __
+        + run()
+        + get_latest_value(key: str) : Any
+        + send_command(command: str)
+        + stop()
+    }
+
+    class RobotInterface {
+        - ip : str
+        + control : RTDEControlInterface
+        + receive : RTDEReceiveInterface
+        + io : RTDEIOInterface
+        __
+        + connect()
+        + reconnect()
+        + is_ready() : bool
+        + stop()
+    }
+}
+
+package "Routines" {
+    abstract class BaseRoutine {
+        # robot : RobotInterface
+        # arduinos : Dict[str, ArduinoNode]
+        __
+        + execute(*args)
+        + ensure_robot_ready() : bool
+        {abstract} + run_logic(*args)
+    }
+}
+
+package "Utils" {
+    class ExperimentLogger {
+        + init_csv(headers)
+        + log_data(row)
+        + save_and_close(filepath)
+    }
+
+    class LivePlotter {
+        + init_plotter(name, x_label, y_label)
+        + update(x, y)
+        + save_and_close(filepath)
+    }
+
+    ExperimentLogger -[hidden]->LivePlotter
+}
+
+' Relationships
+Main --> RobotInterface : init
+Main --> ArduinoNode : init
+Main ..> BaseRoutine : load
+
+BaseRoutine o-- RobotInterface : uses
+BaseRoutine o-- ArduinoNode : uses
+BaseRoutine ..> ExperimentLogger : uses
+BaseRoutine ..> LivePlotter : uses
+
+@enduml
